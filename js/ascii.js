@@ -4,8 +4,9 @@ const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d');
 const asciiOutput = document.getElementById('ascii-output');
 
-canvas.width = 257;
-canvas.height = 100;
+const isMobile = window.innerWidth <= 480;
+canvas.width = isMobile ? 100 : 257;
+canvas.height = isMobile ? 75 : 100;
 
 let contrastVal = 1;
 let brightnessVal = 0;
