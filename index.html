@@ -24,6 +24,9 @@
         <div class="corner br"></div>
         <video id="video" autoplay playsinline></video>
         <pre id="ascii-output"><span class="placeholder">[ camera off ]</span></pre>
+
+        <!-- Flash overlay for capture effect -->
+        <div class="flash-overlay" id="flashOverlay"></div>
       </div>
 
       <div class="sidebar">
@@ -31,6 +34,16 @@
         <div class="card">
           <div class="card-title">CAMERA</div>
           <button id="startBtn">Start Camera</button>
+
+          <!-- Flip button: only relevant on mobile, hidden on desktop via CSS -->
+          <button id="flipBtn" class="flip-btn" disabled title="Flip Camera">
+            ⟳ Flip Camera
+          </button>
+
+          <!-- Capture button -->
+          <button id="captureBtn" class="capture-btn" disabled>
+            ◉ Capture
+          </button>
         </div>
 
         <div class="card">
@@ -91,7 +104,11 @@
 
   </div>
 
-  <script src="js/camera.js"></script>
+  <!-- Hidden canvas used for PNG export -->
+  <canvas id="exportCanvas" style="display:none;"></canvas>
+
   <script src="js/ascii.js"></script>
+  <script src="js/camera.js"></script>
+  <script src="js/capture.js"></script>
 </body>
 </html>

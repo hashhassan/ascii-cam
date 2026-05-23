@@ -1,27 +1,26 @@
 let ASCII_CHARS = ' .:-=+*#%@';
 
-const canvas = document.createElement('canvas');
-const ctx = canvas.getContext('2d');
+const asciiCanvas = document.createElement('canvas');
+const asciiCtx = asciiCanvas.getContext('2d');
 const asciiOutput = document.getElementById('ascii-output');
 
 const isMobile = window.innerWidth <= 480;
-canvas.width = isMobile ? 213 : 257;
-canvas.height = isMobile ? 140 : 100;
+asciiCanvas.width  = isMobile ? 213 : 257;
+asciiCanvas.height = isMobile ? 140 : 100;
 
-let contrastVal = 1;
+let contrastVal  = 1;
 let brightnessVal = 0;
-let densityVal = 10;
+let densityVal   = 10;
+let rendering    = false;
 
 document.getElementById('contrast').addEventListener('input', (e) => {
   contrastVal = parseFloat(e.target.value);
   document.getElementById('contrastVal').textContent = contrastVal;
 });
-
 document.getElementById('brightness').addEventListener('input', (e) => {
   brightnessVal = parseInt(e.target.value);
   document.getElementById('brightnessVal').textContent = brightnessVal;
 });
-
 document.getElementById('density').addEventListener('input', (e) => {
   densityVal = parseInt(e.target.value);
   document.getElementById('densityVal').textContent = densityVal;
@@ -35,11 +34,10 @@ document.querySelectorAll('.charset-btn').forEach(btn => {
   });
 });
 
-function applyAdjustments(brightness) {
-  let b = brightness + brightnessVal;
+function applyAdjustments(b) {
+  b = b + brightnessVal;
   b = (b - 128) * contrastVal + 128;
-  b = Math.min(255, Math.max(0, b));
-  return b;
+  return Math.min(255, Math.max(0, b));
 }
 
 function getAsciiChar(brightness) {
@@ -49,23 +47,22 @@ function getAsciiChar(brightness) {
 }
 
 function frameToAscii() {
-  if (video.readyState !== video.HAVE_ENOUGH_DATA) return;
+  if (!rendering) return;
+  if (video.readyState !== video.HAVE_ENOUGH_DATA) {
+    requestAnimationFrame(frameToAscii);
+    return;
+  }
 
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const pixels = imageData.data;
+  asciiCtx.drawImage(video, 0, 0, asciiCanvas.width, asciiCanvas.height);
+  const pixels = asciiCtx.getImageData(0, 0, asciiCanvas.width, asciiCanvas.height).data;
 
   let result = '';
-
-  for (let row = 0; row < canvas.height; row++) {
-    for (let col = 0; col < canvas.width; col++) {
-      const index = (row * canvas.width + col) * 4;
-      const r = pixels[index];
-      const g = pixels[index + 1];
-      const b = pixels[index + 2];
-      let brightness = 0.299 * r + 0.587 * g + 0.114 * b;
-      brightness = applyAdjustments(brightness);
-      result += getAsciiChar(brightness);
+  for (let row = 0; row < asciiCanvas.height; row++) {
+    for (let col = 0; col < asciiCanvas.width; col++) {
+      const i = (row * asciiCanvas.width + col) * 4;
+      let b = 0.299 * pixels[i] + 0.587 * pixels[i+1] + 0.114 * pixels[i+2];
+      b = applyAdjustments(b);
+      result += getAsciiChar(b);
     }
     result += '\n';
   }
@@ -75,5 +72,15 @@ function frameToAscii() {
 }
 
 function startAscii() {
+  rendering = true;
   requestAnimationFrame(frameToAscii);
 }
+
+function stopAscii() {
+  rendering = false;
+}
+
+// Expose the live canvas so capture.js can snapshot it
+window._getAsciiSnapshot = function () {
+  return asciiCanvas;
+};
