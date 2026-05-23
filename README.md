@@ -4,7 +4,7 @@ A fun web-based ASCII camera that converts your webcam feed into ASCII art in re
 
 ## Live Demo
 [View Live Project]()  
-*(Deployed on AWS Amplify)*
+*(Deployed on AWS Amplify)* https://ascii-cam.d29shfju3zswbj.amplifyapp.com/
 
 ## Features
 - Real-time webcam to ASCII conversion
