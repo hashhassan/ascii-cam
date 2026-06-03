@@ -31,8 +31,9 @@ function captureFrame() {
   const octx   = out.getContext('2d');
 
   // Black background
-  octx.fillStyle = '#000';
+  octx.fillStyle = '#0a0a0a';
   octx.fillRect(0, 0, out.width, out.height);
+  octx.filter = 'brightness(1.8)';
 
   // Draw ASCII text in the current accent colour
   octx.fillStyle    = accent;
